@@ -201,9 +201,9 @@ function startAttract() {
   const world = buildDive(1, 4242);
   state.world = world;
   state.creatures = spawnCreatures(world, 1, 4242);
-  state.sub = createSubmarine(world.width / 2, 320);
+  state.sub = createSubmarine(world.width / 2, 430);
   state.sonar = createSonar();
-  state.attract = { targetX: 700, targetY: 700, retargetAt: 0, pingAt: 1.2 };
+  state.attract = { targetX: 700, targetY: 700, retargetAt: 0, pingAt: 0.8 };
   state.mode = 'title';
 }
 
@@ -256,14 +256,23 @@ function stageShot(kind) {
     for (const mine of state.world.mines) {
       if (distance(sub.x, sub.y, mine.x, mine.y) < 430) mine.revealedUntil = state.time + 60;
     }
+    // The cast, arranged around the sub: jellies drifting in a loose school,
+    // two anglers closing from the right, each close enough to read at a glance.
+    const cast = [
+      { dx: 205, dy: 118 }, { dx: 262, dy: 52 }, { dx: 318, dy: 128 },
+      { dx: 356, dy: 8 }, { dx: 415, dy: 84 }, { dx: 452, dy: -38 },
+      { dx: 505, dy: 30 }, { dx: 548, dy: -84 },
+    ];
     state.creatures.forEach((c, i) => {
-      c.x = sub.x + 190 + i * 36;
-      c.y = sub.y + 60 - i * 44;
+      const spot = cast[i % cast.length];
+      c.x = sub.x + spot.dx;
+      c.y = sub.y + spot.dy;
       c.baseY = c.y;
       c.revealedUntil = state.time + 60;
     });
     state.sonar.rings.push({ x: sub.x, y: sub.y, bornAt: state.time - 0.52 });
-    toast('SALVAGE +185  (3/6)', 'rgba(255,217,77,ALPHA)');
+    state.ringLoop = true;
+    toast(`SALVAGE +185  (3/${state.world.quota})`, 'rgba(255,217,77,ALPHA)');
     state.mode = 'diving';
   } else if (kind === 'deep') {
     state.runSeed = 777;
@@ -293,6 +302,7 @@ function stageShot(kind) {
       angler.revealedUntil = state.time + 60;
     }
     state.sonar.rings.push({ x: sub.x, y: sub.y, bornAt: state.time - 0.3 });
+    state.ringLoop = true;
     state.mode = 'diving';
   } else if (kind === 'end') {
     state.runSeed = 99;
@@ -332,6 +342,11 @@ function update(dt) {
   if (state.mode !== 'diving' || state.paused) return;
 
   if (state.staged) {
+    // A staged scene keeps its sonar ring mid-expansion for the camera:
+    // whenever a ring dies, a fresh one is already half-grown.
+    if (state.ringLoop && state.sonar.rings.length === 0) {
+      state.sonar.rings.push({ x: state.sub.x, y: state.sub.y, bornAt: state.time - 0.45 });
+    }
     updateSonar(state.sonar, allEntities(), dt, state.time);
     updateCreatures(state.creatures, state.sub, dt, state.time);
     return;
@@ -435,6 +450,10 @@ canvas.addEventListener('mousedown', () => {
 });
 
 // Boot: a staged scene when a screenshot asks for one, the attract title else.
-if (shot) stageShot(shot);
-else startAttract();
+if (shot) {
+  document.body.classList.add('shot-mode');
+  stageShot(shot);
+} else {
+  startAttract();
+}
 requestAnimationFrame(frame);

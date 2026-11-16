@@ -159,7 +159,7 @@ function bigTitle(ctx, text, y, size, color) {
 }
 
 export function drawTitleScreen(ctx, state) {
-  dimScreen(ctx, 0.42);
+  dimScreen(ctx, 0.34);
   bigTitle(ctx, 'DEEP ECHO', 218, 92, '#aee9ff');
   ctx.fillStyle = 'rgba(190,235,250,0.92)';
   ctx.font = `600 21px ${FONT}`;

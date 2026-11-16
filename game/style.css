@@ -40,3 +40,26 @@ html, body {
   letter-spacing: 0.04em;
   opacity: 0.75;
 }
+
+/* Shot mode (?shot=...): the canvas fills the whole window with no page
+   chrome, so a window-sized capture is a clean render of the game alone —
+   how the screenshots in shots.json are taken. */
+body.shot-mode #stage {
+  padding: 0;
+  min-height: 0;
+  display: block;
+}
+
+body.shot-mode #game {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+body.shot-mode #hint {
+  display: none;
+}
