@@ -1,0 +1,42 @@
+/* Deep Echo page chrome: a dark room around the canvas, nothing more. The game
+   draws everything itself, HUD and screens included, so screenshots of the canvas
+   show the whole game. */
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background: #010409;
+  color: #9fd8e8;
+  font-family: "Avenir Next", "Segoe UI", system-ui, sans-serif;
+}
+
+#stage {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 16px;
+  background: radial-gradient(1200px 700px at 50% 30%, #06283d 0%, #010409 70%);
+}
+
+#game {
+  width: min(96vw, 1280px);
+  height: auto;
+  aspect-ratio: 1280 / 800;
+  border: 1px solid #0e4a63;
+  border-radius: 10px;
+  box-shadow: 0 0 60px rgba(20, 160, 200, 0.25), 0 24px 60px rgba(0, 0, 0, 0.6);
+  background: #02101d;
+  cursor: crosshair;
+}
+
+#hint {
+  margin: 0;
+  font-size: 13px;
+  letter-spacing: 0.04em;
+  opacity: 0.75;
+}
